@@ -440,6 +440,10 @@ else (MINGW)
           target_link_libraries(mscoreapp rt)
       endif (APPLE)
 
+      if (USE_MEDIAKIT)
+         target_link_libraries(mscoreapp be media)
+      endif (USE_MEDIAKIT)
+
       # 'gold' does not use indirect shared libraries for symbol resolution, Linux only
       if (NOT APPLE)
          if(USE_JACK)
@@ -495,6 +499,10 @@ else (MINGW)
                target_link_libraries(mscoreapp tesseract_api)
          endif (OCR)
       endif (OMR)
+
+      if (HAIKU)
+         target_link_libraries(mscoreapp root)
+      endif (HAIKU)
 
       # Use pre-compiled headers
       vstudio_pch( mscoreapp )
