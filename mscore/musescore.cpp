@@ -335,12 +335,29 @@ QString getSharePath()
       QDir dir(QCoreApplication::applicationDirPath() + QString("/../Resources"));
       return dir.absolutePath() + "/";
 #else
+#ifdef Q_OS_HAIKU
+    // 64 bit install
+    QDir dir(QCoreApplication::applicationDirPath() + QString("/../data/" INSTALL_NAME));
+    if (dir.exists()) {
+        return dir.absolutePath() + "/";
+    }
+
+    // 32 bit install (We have to remember the extra "x86" directory)
+    QDir bigDir(QCoreApplication::applicationDirPath() + QString("/../../data/" INSTALL_NAME));
+    if (dir.exists()) {
+        return bigDir.absolutePath() + "/";
+    }
+
+    // A safe fallback guess
+    return QString(INSTPREFIX "/data/" INSTALL_NAME);
+#else
       // Try relative path (needed for portable AppImage and non-standard installations)
       QDir dir(QCoreApplication::applicationDirPath() + QString("/../share/" INSTALL_NAME));
       if (dir.exists())
             return dir.absolutePath() + "/";
       // Otherwise fall back to default location (e.g. if binary has moved relative to share)
       return QString( INSTPREFIX "/share/" INSTALL_NAME);
+#endif
 #endif
 #endif
       }
@@ -7562,7 +7579,7 @@ MuseScoreApplication::CommandLineParseResult MuseScoreApplication::parseCommandL
       parser.addOption(QCommandLineOption({"L", "layout-debug"}, "Layout debug mode"));
       parser.addOption(QCommandLineOption({"s", "no-synthesizer"}, "No internal synthesizer"));
       parser.addOption(QCommandLineOption({"m", "no-midi"}, "No MIDI"));
-      parser.addOption(QCommandLineOption({"a", "use-audio"}, "Use audio driver: jack, alsa, pulse, or portaudio", "driver"));
+      parser.addOption(QCommandLineOption({"a", "use-audio"}, "Use audio driver: jack, alsa, pulse, or portaudio or mediakit", "driver"));
       parser.addOption(QCommandLineOption({"n", "new-score"}, "Start with new score"));
       parser.addOption(QCommandLineOption({"I", "dump-midi-in"}, "Dump midi input"));
       parser.addOption(QCommandLineOption({"O", "dump-midi-out"}, "Dump midi output"));
