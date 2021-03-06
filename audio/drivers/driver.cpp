@@ -40,7 +40,8 @@ namespace Ms {
 extern Driver* getPulseAudioDriver(Seq*);
 #endif
 
-bool alsaIsUsed = false, jackIsUsed = false, portAudioIsUsed = false, pulseAudioIsUsed = false;
+bool alsaIsUsed = false, jackIsUsed = false, portAudioIsUsed = false, pulseAudioIsUsed = false, mediaKitIsUsed = false;
+
 
 
 //---------------------------------------------------------
@@ -56,6 +57,7 @@ Driver* driverFactory(Seq* seq, QString driverName)
       bool useAlsaFlag       = preferences.getBool(PREF_IO_ALSA_USEALSAAUDIO);
       bool usePortaudioFlag  = preferences.getBool(PREF_IO_PORTAUDIO_USEPORTAUDIO);
       bool usePulseAudioFlag = preferences.getBool(PREF_IO_PULSEAUDIO_USEPULSEAUDIO);
+      bool useMediaKitFlag = preferences.getBool(PREF_IO_MEDIAKIT_USEMEDIAKITAUDIO);
 
       if (!driverName.isEmpty()) {
             driverName        = driverName.toLower();
@@ -63,6 +65,7 @@ Driver* driverFactory(Seq* seq, QString driverName)
             useAlsaFlag       = false;
             usePortaudioFlag  = false;
             usePulseAudioFlag = false;
+            useMediaKitFlag = false;
             if (driverName == "jack")
                   useJackFlag = true;
             else if (driverName == "alsa")
@@ -71,12 +74,15 @@ Driver* driverFactory(Seq* seq, QString driverName)
                   usePulseAudioFlag = true;
             else if (driverName == "portaudio")
                   usePortaudioFlag = true;
+            else if (driverName == "mediakit" || driverName == "haiku")
+                  useMediaKitFlag = true;
             }
 
       alsaIsUsed       = false;
       jackIsUsed       = false;
       portAudioIsUsed  = false;
       pulseAudioIsUsed = false;
+      mediaKitIsUsed = false;
 
 #ifdef USE_PULSEAUDIO
       if (usePulseAudioFlag) {
@@ -136,6 +142,20 @@ Driver* driverFactory(Seq* seq, QString driverName)
             }
 #else
        (void)useJackFlag; // avoid compiler warning
+#endif
+#ifdef USE_MEDIAKIT
+    if (useMediaKitFlag) {
+        driver = new HaikuMediaKit(seq);
+        if (!driver->init()) {
+            qDebug("init Haiku Media Kit failed");
+            delete driver;
+            driver = 0;
+        } else {
+            mediaKitIsUsed = true;
+        }
+    }
+#else
+    (void)useMediaKitFlag; // avoid compiler warning
 #endif
 #endif
       if (driver == 0)
