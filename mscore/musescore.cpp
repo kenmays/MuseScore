@@ -7408,8 +7408,10 @@ void tryToRequestTelemetryPermission()
 void MuseScore::updateUiStyleAndTheme()
       {
       // set UI Theme
+#ifndef Q_OS_HAIKU
       QApplication::setStyle(QStyleFactory::create("Fusion"));
-
+#endif
+      
 #ifdef Q_OS_MAC
       // On Mac, update the color of the window title bars
       CocoaBridge::setWindowAppearanceIsDark(preferences.isThemeDark());
