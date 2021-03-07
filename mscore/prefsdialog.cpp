@@ -1552,8 +1552,11 @@ void PreferenceDialog::exclusiveAudioDriver(bool on)
             if (jackDriver == QObject::sender() && !useJackMidi->isChecked() && !useJackAudio->isChecked()) {
                   useJackMidi->setChecked(true);
                   useJackAudio->setChecked(true);
-                  }
             }
+            if (mediakitDriver != QObject::sender())
+                  mediakitDriver->setChecked(false);
+            }
+      }
       else {
             // True if QGroupBox is checked now or was checked before clicking on it
             bool portAudioChecked =  portaudioDriver->isVisible()  && ((QObject::sender() != portaudioDriver  && portaudioDriver->isChecked())  || QObject::sender() == portaudioDriver);
