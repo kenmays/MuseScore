@@ -98,12 +98,15 @@ void Preferences::init(bool storeInMemoryOnly)
       bool defaultUsePulseAudio = false;
       bool defaultUseJackAudio = false;
       bool defaultUseAlsaAudio = false;
+      bool defaultUseMediaKitAudio = false;
 
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)
       defaultUsePortAudio  = true;
       // Linux
 #elif defined(USE_PULSEAUDIO)
       defaultUsePulseAudio  = true;
+  #elif defined(USE_MEDIAKIT)
+    defaultUseMediaKitAudio = true;
 #elif defined(USE_ALSA)
       defaultUseAlsaAudio = true;
 #elif defined(USE_PORTAUDIO)
@@ -184,6 +187,7 @@ void Preferences::init(bool storeInMemoryOnly)
             {PREF_IO_JACK_USEJACKAUDIO,                            new BoolPreference(defaultUseJackAudio, false)},
             {PREF_IO_JACK_USEJACKMIDI,                             new BoolPreference(false, false)},
             {PREF_IO_JACK_USEJACKTRANSPORT,                        new BoolPreference(false, false)},
+            { PREF_IO_MEDIAKIT_USEMEDIAKITAUDIO, new BoolPreference(defaultUseMediaKitAudio, false)},
             {PREF_IO_MIDI_ADVANCEONRELEASE,                        new BoolPreference(true, false)},
             {PREF_IO_MIDI_ENABLEINPUT,                             new BoolPreference(true, false)},
             {PREF_IO_MIDI_EXPANDREPEATS,                           new BoolPreference(true, false)},
