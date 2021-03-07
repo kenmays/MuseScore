@@ -1572,6 +1572,8 @@ void PreferenceDialog::exclusiveAudioDriver(bool on)
                   alsaDriver->setChecked(!(portAudioChecked || pulseaudioChecked || jackChecked || mediakitChecked));
             if (jackDriver == QObject::sender())
                   jackDriver->setChecked(!(portAudioChecked || pulseaudioChecked || alsaChecked || mediakitChecked));
+            if (mediakitDriver == QObject::sender()) {
+                  mediakitDriver->setChecked(!(portAudioChecked || pulseaudioChecked || alsaChecked || jackChecked));
             }
       }
 
