@@ -139,6 +139,9 @@ PreferenceDialog::PreferenceDialog(QWidget* parent)
 #ifndef USE_PORTAUDIO
       portaudioDriver->setVisible(false);
 #endif
+#ifndef USE_MEDIAKIT
+    mediakitDriver->setVisible(false);
+#endif
 #ifndef USE_PORTMIDI
       portMidiInput->setVisible(false);
       portMidiInputLabel->setVisible(false);
@@ -250,6 +253,7 @@ PreferenceDialog::PreferenceDialog(QWidget* parent)
       connect(portaudioDriver,            &QGroupBox::toggled, this, &PreferenceDialog::exclusiveAudioDriver);
       connect(pulseaudioDriver,           &QGroupBox::toggled, this, &PreferenceDialog::exclusiveAudioDriver);
       connect(alsaDriver,                 &QGroupBox::toggled, this, &PreferenceDialog::exclusiveAudioDriver);
+      connect(mediakitDriver, &QGroupBox::toggled, this, &PreferenceDialog::exclusiveAudioDriver);
       connect(jackDriver,                 &QGroupBox::toggled, this, &PreferenceDialog::exclusiveAudioDriver);
       connect(useJackAudio,               &QRadioButton::toggled, this, &PreferenceDialog::nonExclusiveJackDriver);
       connect(useJackMidi,                &QRadioButton::toggled, this, &PreferenceDialog::nonExclusiveJackDriver);
@@ -1421,6 +1425,7 @@ void PreferenceDialog::apply()
                   preferences.setPreference(PREF_IO_ALSA_USEALSAAUDIO, alsaDriver->isChecked());
                   preferences.setPreference(PREF_IO_PORTAUDIO_USEPORTAUDIO, portaudioDriver->isChecked());
                   preferences.setPreference(PREF_IO_PULSEAUDIO_USEPULSEAUDIO, pulseaudioDriver->isChecked());
+                  preferences.setPreference(PREF_IO_MEDIAKIT_USEMEDIAKITAUDIO, mediakitDriver->isChecked());
                   preferences.setPreference(PREF_IO_ALSA_DEVICE, alsaDevice->text());
                   preferences.setPreference(PREF_IO_ALSA_SAMPLERATE, alsaSampleRate->currentData().toInt());
                   preferences.setPreference(PREF_IO_ALSA_PERIODSIZE, alsaPeriodSize->currentData().toInt());
@@ -1560,13 +1565,13 @@ void PreferenceDialog::exclusiveAudioDriver(bool on)
                   return;
             // Don't allow to uncheck all drivers
             if (portaudioDriver == QObject::sender())
-                  portaudioDriver->setChecked(!(pulseaudioChecked || alsaChecked || jackChecked));
+                  portaudioDriver->setChecked(!(pulseaudioChecked || alsaChecked || jackChecked || mediakitChecked));
             if (pulseaudioDriver == QObject::sender())
-                  pulseaudioDriver->setChecked(!(portAudioChecked || alsaChecked || jackChecked));
+                  pulseaudioDriver->setChecked(!(portAudioChecked || alsaChecked || jackChecked || mediakitChecked));
             if (alsaDriver == QObject::sender())
-                  alsaDriver->setChecked(!(portAudioChecked || pulseaudioChecked || jackChecked));
+                  alsaDriver->setChecked(!(portAudioChecked || pulseaudioChecked || jackChecked || mediakitChecked));
             if (jackDriver == QObject::sender())
-                  jackDriver->setChecked(!(portAudioChecked || pulseaudioChecked || alsaChecked));
+                  jackDriver->setChecked(!(portAudioChecked || pulseaudioChecked || alsaChecked || mediakitChecked));
             }
       }
 
