@@ -3480,7 +3480,7 @@ void setMscoreLocale(QString _localeName)
       loadTranslation("tours", _localeName);
 
       QString resourceDir;
-#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)|| defined(Q_OS_HAIKU)
       resourceDir = mscoreGlobalShare + "locale/";
 #else
       resourceDir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
