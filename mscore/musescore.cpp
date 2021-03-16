@@ -439,6 +439,7 @@ void updateExternalValuesFromPreferences() {
       MScore::selectColor[1] = preferences.getColor(PREF_UI_SCORE_VOICE2_COLOR);
       MScore::selectColor[2] = preferences.getColor(PREF_UI_SCORE_VOICE3_COLOR);
       MScore::selectColor[3] = preferences.getColor(PREF_UI_SCORE_VOICE4_COLOR);
+      MScore::cursorColor    = preferences.getColor(PREF_UI_SCORE_CURSOR_COLOR);
 
       MScore::setHRaster(preferences.getInt(PREF_UI_APP_RASTER_HORIZONTAL));
       MScore::setVRaster(preferences.getInt(PREF_UI_APP_RASTER_VERTICAL));
@@ -2399,8 +2400,10 @@ void MuseScore::selectionChanged(SelState selectionState)
       if (timeline())
             timeline()->changeSelection(selectionState);
       if (_pianoTools && _pianoTools->isVisible()) {
-            if (cs)
-                  _pianoTools->changeSelection(cs->selection());
+            if (cs) {
+                  if (seq->isStopped())
+                        _pianoTools->changeSelection(cs->selection());
+                  }
             else
                   _pianoTools->clearSelection();
             }

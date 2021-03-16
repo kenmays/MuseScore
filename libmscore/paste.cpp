@@ -106,8 +106,8 @@ bool Score::pasteStaff(XmlReader& e, Segment* dst, int dstStaff, Fraction scale)
                         break;
                         }
                   }
-            Fraction tickStart = Fraction::fromTicks(e.intAttribute("tick", 0));
-                tickLen       =  Fraction::fromTicks(e.intAttribute("len", 0));
+            Fraction tickStart = Fraction::fromString(e.attribute("tick", "0"));
+                tickLen       =  Fraction::fromString(e.attribute("len", "0"));
             Fraction oTickLen =  tickLen;
                 tickLen       *= scale;
             int staffStart    = e.intAttribute("staff", 0);
@@ -649,8 +649,7 @@ void Score::pasteChordRest(ChordRest* cr, const Fraction& t, const Interval& src
                                           nl2[i]->setTieFor(nl1[i]->tieFor());
                                           tie2->setStartNote(nl2[i]);
                                           }
-                                    nl1[i]->setTieFor(tie);
-                                    nl2[i]->setTieBack(tie);
+                                    undoAddElement(tie);
                                     }
                         c = c2;
                         firstpart = false;
@@ -1125,10 +1124,12 @@ void Score::cmdPaste(const QMimeData* ms, MuseScoreView* view, Fraction scale)
                   addRefresh(target->abbox());   // layout() ?!
                   EditData ddata(view);
                   ddata.view       = view;
-                  ddata.dropElement    = nel;
-                  target->drop(ddata);
-                  if (_selection.element())
-                        addRefresh(_selection.element()->abbox());
+                  if (target->acceptDrop(ddata)) {
+                        ddata.dropElement    = nel;
+                        target->drop(ddata);
+                        if (_selection.element())
+                              addRefresh(_selection.element()->abbox());
+                        }
                   }
             delete image;
             }
